@@ -1,0 +1,146 @@
+git gui
+gitk
+gitk --all
+git config --global color.ui "auto"
+
+git init
+git add index.html
+git commit -m "add index.html"
+git log
+git log -1
+git checkout -b rb1.0
+
+git branch
+git checkout master
+git rebase rb1.0 1.0
+git branch -d rb1.0
+git archive --format=tar --prefix=rb1.0/ 1.0 | gzip > mysite-1.0.tar.gz
+
+git clone git://github.com/tswicegood/mysite.git mysite-remote
+
+git reset --hard HEAD\^ # 1つ前のコミット、add、実ファイルを取り消す
+git reset --mixed HEAD\^ # 1つ前のコミット、addを取り消す
+git reset --soft HEAD\^ # 1つ前のコミットのみを取り消す
+
+git reset --hard ORIG_HEAD # 1つ前のアクションを取り消す 2回やると戻る
+    git reset --mixed ORIG_HEAD # 1つ前のアクションを取り消す 2回やると戻る
+    git reset --soft ORIG_HEAD # 1つ前のアクションを取り消す 2回やると戻る
+
+git add -i
+
+git add -p
+git commit -v
+
+git diff
+git diff --cached
+git diff head
+
+git commit -a -m "Change biography link and add contact link" -m "About is shorter, so easier to process" -m "We need to provide contact info"
+
+git mv index.html hello.html
+
+vi .git/info/exclude
+.DS_Store
+.*.swp
+
+git branch -m master mymaster
+git checkout -b test master
+
+git merge rb2.0
+git merge --squash rb2.0
+
+git reset --hard ORIG_HEAD # 1つ前処理の実ファイル、ステーステージングエリア、コミットを取り消す 2回やると戻る
+git reset --mixed ORIG_HEAD # 1つ前処理のステージングエリア、コミットを取り消す 2回やると戻る
+git reset --soft ORIG_HEAD # 1つ前処理のコミットのみ取り消す 2回やると戻る
+
+
+git config --global alias.cm "commit"
+git config --global alias.co "checkout"
+git config --global alias.cp "cherry-pick"
+git config --global alias.rv "revert"
+git config --global alias.st "status"
+
+git ci -am "c"
+git co master
+
+git rebase master yama # masterをyamaに反映してyamaブランチに移動
+
+git marge yama
+
+git marge --squash yama #圧縮commitはステージステージングエリアに反映
+git commit -am "c"
+
+git diff --stat 1.0 2.0 #バージョン間の差分を見る
+
+git blame a.sh
+
+
+git log -C -C -1 -p
+
+
+git rv -n 58c0c6c #取り消し
+git cm -am "revert"
+
+git rebase -i HEAD~3
+   順番の並べ替え、pick をsquashにすると統合、editにすると分割
+
+git reset HEAD\^ # editにしたら、一回resetする
+git commit a.sh # そして1つ1つコミットする
+git commit b.sh # そして1つ1つコミットする
+
+git rebase --continue # rebaseを終わらせる
+
+
+
+
+-- remote --
+git clone git@github.com:tswicegood/mysite-chp6.git
+git clone http://github.com/tswicegood/mysite-chp6.git
+
+git fetch # リモートブランチの更新
+git branch -r
+
+# リモートリポジトリ登録
+git remote add origin https://github.com/yamazoon/gittest.git
+vi .git/config
+
+git push --dry-run
+git push
+git push origin master
+
+git pull origin master
+git checkout HEAD #全ての変更をプルする
+
+# リモートリポジトリに名前を付けてPULL
+git init
+git remote add dotfiles https://github.com/yamazoon/dotfiles.git
+git pull dotfiles HEAD
+
+git remote show
+git remote rm dotfiles
+
+# リモートブランチを指定してローカルにcheckoutする
+git branch -a
+git co -b yama origin/yama
+
+xx
+git push # checkoutしたブランチにプッシュ
+
+
+--------------------------------------------------------------
+
+# 練習 git cloneからgit pushまで
+git clone git@github.com:xxxx/xxxx.git
+cd xxxx #gitリポジトリ
+
+git branch -r #リモートリポジトリ確認
+git checkout origin/feature #リモートリポジトリをチェックアウト
+# git checkout -b test origin/feature #リモートリポジトリをローカル(test)にチェックアウトしても良い
+git fetch #更新確認
+git pull origin feature # 更新引き出し(一応)
+
+git rm abc.yaml #編集
+git status #ステージングエリア(編集履歴)確認
+git commit -am "delete test files" #コミット (何回しても良い)
+git push origin HEAD:feature #プッシュ
+
