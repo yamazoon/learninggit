@@ -55,15 +55,15 @@ ec2.describe_vpc_endpoints[0].sort_by!(&:vpc_id).map do |a|
                                 h[:tags].map do |i|
                                     $subnet_name = i[:value] if i[:key].match(/^Name$/)
                                 end
-                            $subnet_cidr_block = h[:cidr_block]
+                                $subnet_cidr_block = h[:cidr_block]
+                                outputdoc = [a[:vpc_endpoint_id],a[:vpc_endpoint_type],a[:service_name],$route_table_id,$subnet_name,$subnet_cidr_block,a[:vpc_id],$vpc_name,$cidr].join(",")
+                                File.open($folder+ "/" + outputcsv, "a") do |z|
+                                    z.puts outputdoc
+                                    puts outputdoc
+                                end
                             end
                         end
                     end
-                end
-                outputdoc = [a[:vpc_endpoint_id],a[:vpc_endpoint_type],a[:service_name],$route_table_id,$subnet_name,$subnet_cidr_block,a[:vpc_id],$vpc_name,$cidr].join(",")
-                File.open($folder+ "/" + outputcsv, "a") do |z|
-                    z.puts outputdoc
-                    puts outputdoc
                 end
             end
         end
