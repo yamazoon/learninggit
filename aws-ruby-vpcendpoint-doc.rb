@@ -29,7 +29,7 @@ ec2.describe_vpc_endpoints[0].sort_by!(&:vpc_id).map do |a|
         $subnet_name = "-"
         $subnet_cidr_block = "-"
         $route_table_id = "-"
-        outputcsv = "#{$accountnum}" + "--" + "vpcendpoint" + ".csv"
+        outputcsv = "#{$accountnum}" + "----" + "#{$region}" + "----" + "vpcendpoint" + ".csv"
         if a[:route_table_ids].empty?
             a[:subnet_ids].each do |j|
                 describe_subnets = ec2.describe_subnets({
@@ -38,9 +38,9 @@ ec2.describe_vpc_endpoints[0].sort_by!(&:vpc_id).map do |a|
                 })
                 describe_subnets[:subnets].each do |k|
                     k[:tags].map do |l|
-                        puts $subnet_name = l[:value] if l[:key].match(/^Name$/)
+                        $subnet_name = l[:value] if l[:key].match(/^Name$/)
                     end
-                    puts $subnet_cidr_block = k[:cidr_block]
+                    $subnet_cidr_block = k[:cidr_block]
                     outputdoc = [a[:vpc_id],$vpc_name,$cidr,$subnet_name,$subnet_cidr_block,$route_table_id,a[:service_name],a[:vpc_endpoint_type],a[:vpc_endpoint_id]].join(",")
                     File.open($folder+ "/" + outputcsv, "a") do |y|
                         y.puts outputdoc
