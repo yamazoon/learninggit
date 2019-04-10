@@ -19,8 +19,8 @@ ec2.describe_vpc_endpoints[0].sort_by!(&:vpc_id).map do |a|
         a[:vpc_id], 
       ], 
     })
-    $vpc_name = "nothing"
-    $cidr = "nothing"
+    $vpc_name = "-"
+    $cidr = "-"
     describe_vpcs.vpcs.map do |b|
         b[:tags].map do |c|
             $vpc_name = c[:value] if c[:key].match(/^Name$/)
@@ -31,10 +31,22 @@ ec2.describe_vpc_endpoints[0].sort_by!(&:vpc_id).map do |a|
         $route_table_id = "-"
         outputcsv = "#{$accountnum}" + "--" + "vpcendpoint" + ".csv"
         if a[:route_table_ids].empty?
-            outputdoc = [a[:vpc_endpoint_id],a[:vpc_endpoint_type],a[:service_name],$route_table_id,$subnet_name,$subnet_cidr_block,a[:vpc_id],$vpc_name,$cidr].join(",")
-            File.open($folder+ "/" + outputcsv, "a") do |z|
-                z.puts outputdoc
-                puts outputdoc
+            a[:subnet_ids].each do |j|
+                describe_subnets = ec2.describe_subnets({
+                  subnet_ids: [j],
+                  dry_run: false,
+                })
+                describe_subnets[:subnets].each do |k|
+                    k[:tags].map do |l|
+                        puts $subnet_name = l[:value] if l[:key].match(/^Name$/)
+                    end
+                    puts $subnet_cidr_block = k[:cidr_block]
+                    outputdoc = [a[:vpc_id],$vpc_name,$cidr,$subnet_name,$subnet_cidr_block,$route_table_id,a[:service_name],a[:vpc_endpoint_type],a[:vpc_endpoint_id]].join(",")
+                    File.open($folder+ "/" + outputcsv, "a") do |y|
+                        y.puts outputdoc
+                        puts outputdoc
+                    end
+                end
             end
         else
             a[:route_table_ids].each do |d|
@@ -56,7 +68,7 @@ ec2.describe_vpc_endpoints[0].sort_by!(&:vpc_id).map do |a|
                                     $subnet_name = i[:value] if i[:key].match(/^Name$/)
                                 end
                                 $subnet_cidr_block = h[:cidr_block]
-                                outputdoc = [a[:vpc_endpoint_id],a[:vpc_endpoint_type],a[:service_name],$route_table_id,$subnet_name,$subnet_cidr_block,a[:vpc_id],$vpc_name,$cidr].join(",")
+                                outputdoc = [a[:vpc_id],$vpc_name,$cidr,$subnet_name,$subnet_cidr_block,$route_table_id,a[:service_name],a[:vpc_endpoint_type],a[:vpc_endpoint_id]].join(",")
                                 File.open($folder+ "/" + outputcsv, "a") do |z|
                                     z.puts outputdoc
                                     puts outputdoc
